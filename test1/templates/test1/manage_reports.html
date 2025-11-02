@@ -1,0 +1,183 @@
+{% extends 'test1/base.html' %}
+{% block title %}Reports Overview{% endblock %}
+
+{% block content %}
+<style>
+  .table-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+  .table thead {
+    background-color: #198754;
+    color: white;
+  }
+  .table tbody tr {
+    transition: transform 0.1s ease, background 0.2s ease;
+  }
+  .table tbody tr:hover {
+    background-color: #f4fff6;
+    transform: scale(1.01);
+  }
+  .summary-box {
+    border-radius: 12px;
+    color: white;
+    padding: 1rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  }
+  .summary-box i {
+    font-size: 1.6rem;
+    opacity: 0.9;
+  }
+  .filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .filter-box select, .filter-box input {
+    border-radius: 8px;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+  }
+</style>
+
+<div class="container py-4">
+  <h3 class="fw-bold text-success mb-4 text-center">
+    <i class="bi bi-clipboard-data me-2"></i> Reports Overview
+  </h3>
+
+  <!-- Summary Cards -->
+  <div class="row text-center mb-4">
+    <div class="col-md-3">
+      <div class="summary-box bg-success">
+        <i class="bi bi-file-earmark-text"></i>
+        <h6 class="mt-2">Total Reports</h6>
+        <h4>{{ total_reports }}</h4>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="summary-box bg-primary">
+        <i class="bi bi-person-hearts"></i>
+        <h6 class="mt-2">Human</h6>
+        <h4>{{ human_reports }}</h4>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="summary-box bg-info text-dark">
+        <i class="bi bi-bug"></i>
+        <h6 class="mt-2">Animal</h6>
+        <h4>{{ animal_reports }}</h4>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="summary-box bg-warning text-dark">
+        <i class="bi bi-tree"></i>
+        <h6 class="mt-2">Environmental</h6>
+        <h4>{{ environmental_reports }}</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-box">
+      <label class="fw-semibold me-2 text-secondary">Filter by Category:</label>
+      <select id="categoryFilter">
+        <option value="all">All</option>
+        <option value="human">Human</option>
+        <option value="animal">Animal</option>
+        <option value="environmental">Environmental</option>
+      </select>
+    </div>
+
+    <div class="filter-box">
+      <input type="text" id="searchBox" placeholder="Search disease or district...">
+    </div>
+  </div>
+
+  <!-- Report Table -->
+  <div class="card table-card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0" id="reportTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Disease</th>
+              <th>Category</th>
+              <th>District</th>
+              <th>Cases</th>
+              <th>Deaths</th>
+              <th>Reported By</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in reports %}
+            <tr data-category="{{ r.disease.category }}">
+              <td>{{ forloop.counter }}</td>
+              <td>{{ r.disease.name }}</td>
+              <td>
+                {% if r.disease.category == "human" %}
+                  <span class="badge bg-primary">Human</span>
+                {% elif r.disease.category == "animal" %}
+                  <span class="badge bg-info text-dark">Animal</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark">Environmental</span>
+                {% endif %}
+              </td>
+              <td>{{ r.district.name }}</td>
+              <td>
+                {% if r.number_of_cases > 100 %}
+                  <span class="badge bg-danger text-light">{{ r.number_of_cases }}</span>
+                {% elif r.number_of_cases > 50 %}
+                  <span class="badge bg-warning text-dark">{{ r.number_of_cases }}</span>
+                {% else %}
+                  <span class="badge bg-success">{{ r.number_of_cases }}</span>
+                {% endif %}
+              </td>
+              <td>{{ r.deaths }}</td>
+              <td>{{ r.reporter.user.username|default:"—" }}</td>
+              <td>{{ r.date_reported }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">No reports available.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS for Filter + Search -->
+<script>
+  const filter = document.getElementById('categoryFilter');
+  const search = document.getElementById('searchBox');
+  const rows = document.querySelectorAll('#reportTable tbody tr');
+
+  function applyFilters() {
+    const category = filter.value.toLowerCase();
+    const query = search.value.toLowerCase();
+
+    rows.forEach(row => {
+      const rowCategory = row.dataset.category.toLowerCase();
+      const text = row.textContent.toLowerCase();
+
+      const matchesCategory = (category === 'all' || rowCategory === category);
+      const matchesSearch = text.includes(query);
+
+      row.style.display = (matchesCategory && matchesSearch) ? '' : 'none';
+    });
+  }
+
+  filter.addEventListener('change', applyFilters);
+  search.addEventListener('keyup', applyFilters);
+</script>
+{% endblock %}

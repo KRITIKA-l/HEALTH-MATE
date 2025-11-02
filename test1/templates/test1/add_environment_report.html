@@ -1,0 +1,56 @@
+{% extends "test1/base.html" %}
+{% block title %}Add Environment Report{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold text-success mb-4">➕ Add Environmental Report</h2>
+
+  <form method="POST" class="card shadow-lg p-4 rounded-4 bg-light border-0">
+    {% csrf_token %}
+    <div class="row g-4">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">District</label>
+        <select name="district" class="form-select rounded-pill" required>
+          <option value="">Select District</option>
+          {% for district in districts %}
+            <option value="{{ district.id }}">{{ district.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Environmental Issue</label>
+        <select name="disease" class="form-select rounded-pill" required>
+          <option value="">Select Issue</option>
+          {% for disease in diseases %}
+            <option value="{{ disease.id }}">{{ disease.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Number of Cases</label>
+        <input type="number" name="number_of_cases" class="form-control rounded-pill" required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Deaths</label>
+        <input type="number" name="deaths" class="form-control rounded-pill">
+      </div>
+
+      <div class="col-12">
+        <label class="form-label fw-semibold">Source</label>
+        <div class="input-group">
+          <input type="text" name="source" placeholder="Source or officer name" class="form-control rounded-start-pill">
+          <button type="button" class="btn btn-outline-success rounded-end-pill">
+            🎙️ Record
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-end mt-4">
+      <button type="submit" class="btn btn-success px-5 rounded-pill">Submit Report</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

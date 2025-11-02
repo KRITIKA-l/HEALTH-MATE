@@ -1,0 +1,135 @@
+{% extends "test1/base.html" %}
+
+{% block title %}About the Platform{% endblock %}
+{% block header %}About{% endblock %}
+
+{% block content %}
+<div class="container bg-white rounded-4 shadow-sm p-4 mt-3">
+
+  <!-- Platform Identity -->
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-success mb-2">
+      <i class="bi bi-diagram-3 me-2"></i> Integrated Health Data Platform
+    </h2>
+    <p class="text-muted fs-6">
+      Bridging <b>Human</b>, <b>Animal</b>, and <b>Environmental</b> Health through Smart Data Integration
+    </p>
+  </div>
+
+  <!-- Vision & Mission -->
+  <section class="mb-5">
+    <h4 class="fw-semibold text-primary mb-3"><i class="bi bi-bullseye me-2"></i>Our Vision & Mission</h4>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="p-3 border rounded-4 shadow-sm h-100 bg-light">
+          <h6 class="fw-bold text-success">Vision</h6>
+          <p class="text-secondary small">
+            To establish a unified “One Health” ecosystem where data from human, animal, and 
+            environmental sources merge to predict, prevent, and control disease outbreaks efficiently.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-3 border rounded-4 shadow-sm h-100 bg-light">
+          <h6 class="fw-bold text-success">Mission</h6>
+          <p class="text-secondary small">
+            Empower local and regional health departments with real-time analytics, voice-enabled 
+            reporting, and data-driven collaboration tools to safeguard community health.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platform Journey (Timeline Style) -->
+  <section class="mb-5">
+    <h4 class="fw-semibold text-primary mb-4"><i class="bi bi-hourglass-split me-2"></i>Our Journey</h4>
+    <div class="timeline position-relative ms-3">
+      <div class="timeline-item mb-4 ps-4 border-start border-3 border-success">
+        <h6 class="fw-bold text-dark">Concept Stage</h6>
+        <p class="text-secondary small">Recognizing the growing need for integrated disease surveillance across sectors.</p>
+      </div>
+      <div class="timeline-item mb-4 ps-4 border-start border-3 border-primary">
+        <h6 class="fw-bold text-dark">Prototype Development</h6>
+        <p class="text-secondary small">Built a unified data dashboard linking human, animal, and environmental records.</p>
+      </div>
+      <div class="timeline-item ps-4 border-start border-3 border-warning">
+        <h6 class="fw-bold text-dark">Next Step</h6>
+        <p class="text-secondary small">Expanding to predictive analytics and real-time outbreak alerts using AI models.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Highlights -->
+  <section class="mb-5">
+    <h4 class="fw-semibold text-primary mb-3"><i class="bi bi-stars me-2"></i>Key Highlights</h4>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-3 h-100">
+          <i class="bi bi-globe2 fs-2 text-success mb-2"></i>
+          <h6 class="fw-bold">One Health Integration</h6>
+          <p class="text-secondary small">Synchronizing data from human, animal, and environmental sources in one hub.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-3 h-100">
+          <i class="bi bi-activity fs-2 text-danger mb-2"></i>
+          <h6 class="fw-bold">Smart Insights</h6>
+          <p class="text-secondary small">Detecting trends and anomalies through real-time visual analytics.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-3 h-100">
+          <i class="bi bi-mic fs-2 text-primary mb-2"></i>
+          <h6 class="fw-bold">Voice-Enabled Reporting</h6>
+          <p class="text-secondary small">Simplifying data entry for field workers through automated speech recognition.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Team / Future Expansion Section -->
+  <section>
+    <h4 class="fw-semibold text-primary mb-3"><i class="bi bi-people-fill me-2"></i>Future Scope</h4>
+    <div class="p-3 bg-light rounded-4 shadow-sm">
+      <p class="text-secondary small">
+        The platform is evolving toward integrating AI-powered disease prediction, GIS-based mapping, 
+        and mobile app reporting modules. Future releases aim to make health data more accessible 
+        and collaborative — empowering every district to act faster and smarter.
+      </p>
+    </div>
+  </section>
+</div>
+
+<style>
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background-color: #e0e0e0;
+  top: 0;
+}
+.timeline-item {
+  position: relative;
+}
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 8px;
+  width: 14px;
+  height: 14px;
+  background-color: #198754;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #198754;
+}
+.card:hover {
+  transform: translateY(-3px);
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+</style>
+{% endblock %}

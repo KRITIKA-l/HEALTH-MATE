@@ -1,0 +1,81 @@
+{% extends "test1/base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="container text-center py-5">
+  <h1 class="fw-bold mb-3 text-success">🌐 Integrated Health Data Platform</h1>
+  <p class="lead text-secondary mb-5">
+    A unified system combining <strong>Human</strong>, <strong>Animal</strong>, and <strong>Environmental</strong> health data 
+    for smarter, faster, and coordinated disease surveillance.
+  </p>
+
+  {% if user.is_authenticated %}
+    <div class="alert alert-success rounded-4 shadow-sm mb-4">
+      👋 Welcome, <strong>{{ user.username }}</strong>!
+      <span class="text-muted">You are logged in as 
+        <strong>{{ user.userprofile.get_role_display }}</strong>.
+      </span>
+    </div>
+
+    <div class="row justify-content-center g-4">
+      {% if user.userprofile.role == "admin" %}
+        <div class="col-md-3">
+          <a href="{% url 'admin_dashboard' %}" class="btn btn-dark w-100 py-3 rounded-4 shadow">⚙️ Admin Dashboard</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'manage_users' %}" class="btn btn-outline-dark w-100 py-3 rounded-4 shadow-sm">👥 Manage Users</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'manage_reports' %}" class="btn btn-outline-dark w-100 py-3 rounded-4 shadow-sm">📄 Manage Reports</a>
+        </div>
+      {% elif user.userprofile.role == "health_worker" %}
+        <div class="col-md-3">
+          <a href="{% url 'human_dashboard' %}" class="btn btn-primary w-100 py-3 rounded-4 shadow">🏥 Human Health Dashboard</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'add_report' %}" class="btn btn-outline-primary w-100 py-3 rounded-4 shadow-sm">➕ Add Report</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'my_reports' %}" class="btn btn-outline-primary w-100 py-3 rounded-4 shadow-sm">📋 My Reports</a>
+        </div>
+      {% elif user.userprofile.role == "veterinary_officer" %}
+        <div class="col-md-3">
+          <a href="{% url 'animal_dashboard' %}" class="btn btn-success w-100 py-3 rounded-4 shadow">🐄 Animal Health Dashboard</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'add_animal_report' %}" class="btn btn-outline-success w-100 py-3 rounded-4 shadow-sm">➕ Add Animal Report</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'my_animal_reports' %}" class="btn btn-outline-success w-100 py-3 rounded-4 shadow-sm">📋 My Reports</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'district_data' %}" class="btn btn-outline-success w-100 py-3 rounded-4 shadow-sm">🌍 District Data</a>
+        </div>
+      {% elif user.userprofile.role == "environment_officer" %}
+        <div class="col-md-3">
+          <a href="{% url 'environment_dashboard' %}" class="btn btn-info w-100 py-3 rounded-4 shadow">🌿 Environment Dashboard</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'add_environment_report' %}" class="btn btn-outline-info w-100 py-3 rounded-4 shadow-sm">➕ Add Report</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'environment_reports' %}" class="btn btn-outline-info w-100 py-3 rounded-4 shadow-sm">📋 View Reports</a>
+        </div>
+        <div class="col-md-3">
+          <a href="{% url 'environment_overview' %}" class="btn btn-outline-info w-100 py-3 rounded-4 shadow-sm">📈 Overview</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="mt-5">
+      <a href="{% url 'logoutuser' %}" class="btn btn-outline-danger rounded-pill px-4 py-2 shadow-sm">🚪 Logout</a>
+    </div>
+  {% else %}
+    <div class="mt-4">
+      <a href="{% url 'loginuser' %}" class="btn btn-primary rounded-pill px-5 py-3 shadow-sm mx-2">🔑 Login</a>
+      <a href="{% url 'signupuser' %}" class="btn btn-outline-primary rounded-pill px-5 py-3 shadow-sm mx-2">📝 Sign Up</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

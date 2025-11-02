@@ -1,0 +1,185 @@
+<style>
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .navbar {
+            width: 100%;
+            min-height: 65px;
+            background-color: #1e3a5f; /* Blue-gray tone */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1045;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .navbar-heading {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #2e4966;
+            color: white;
+            position: fixed;
+            top: 65px;
+            bottom: 0;
+            left: 0;
+            padding: 1rem;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.show { transform: translateX(0%); }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .sidebar a:hover {
+            background-color: #43617f;
+        }
+
+        .right-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profilebar {
+            width: 250px;
+            position: fixed;
+            top: 65px;
+            bottom: 0;
+            right: 0;
+            background-color: #e9eef3;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            padding: 1rem;
+        }
+
+        .profilebar.show {
+            transform: translateX(0%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="left-icons d-flex align-items-center">
+            <button class="btn text-white" id="togglebtn" onclick="toggleSidebar()">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <div class="navbar-heading ms-2">HEALTH-MATE</div>
+        </div>
+
+        <div class="right-icons">
+            <button class="btn text-white" onclick="toggleProfile()">
+                <i class="bi bi-person-circle fs-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <!-- Public Links (always visible) -->
+        <a href="{% url 'home' %}"><i class="bi bi-house"></i> Home</a>
+        <a href="{% url 'public_statistics' %}"><i class="bi bi-bar-chart"></i> Statistics</a>
+        <a href="{% url 'about' %}"><i class="bi bi-info-circle"></i> About</a>
+
+        <hr style="border-color: rgba(255,255,255,0.2);">
+
+        <!-- Role-based links -->
+        {% if user.is_authenticated %}
+            {% if user.userprofile.role == "admin" %}
+                <a href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                <a href="{% url 'manage_users' %}"><i class="bi bi-people"></i> Manage Users</a>
+                <a href="{% url 'manage_reports' %}"><i class="bi bi-clipboard-data"></i> Reports</a>
+                <a href="{% url 'districts_view' %}"><i class="bi bi-geo-alt"></i> Districts</a>
+                <a href="{% url 'diseases_view' %}"><i class="bi bi-virus"></i> Diseases</a>
+            {% elif user.userprofile.role == "health_worker" %}
+                <a href="{% url 'add_report' %}"><i class="bi bi-file-earmark-plus"></i> Add Report</a>
+                <a href="{% url 'voice_report' %}"><i class="bi bi-mic"></i> Voice Report</a>
+                <a href="{% url 'my_reports' %}"><i class="bi bi-journal-text"></i> My Reports</a>
+            {% elif user.userprofile.role == "veterinary_officer" %}
+                <a href="{% url 'add_animal_report' %}"><i class="bi bi-file-earmark-plus"></i> Add Report</a>
+                <a href="{% url 'my_animal_reports' %}"><i class="bi bi-bug"></i> Animal Reports</a>
+                <a href="{% url 'district_data' %}"><i class="bi bi-map"></i> District Data</a>
+            {% elif user.userprofile.role == "environment_officer" %}
+                <a href="{% url 'environment_dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                <a href="{% url 'add_environment_report' %}"><i class="bi bi-file-earmark-plus"></i> Add Report</a>
+                <a href="{% url 'environment_reports' %}"><i class="bi bi-clipboard-data"></i> My Reports</a>
+                <a href="{% url 'environment_overview' %}"><i class="bi bi-globe2"></i> Overview</a>
+            {% endif %}
+        {% else %}
+            <div class="text-light small mt-3">
+                <i class="bi bi-lock"></i> Login for more features
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Profile Sidebar -->
+    <div class="profilebar" id="profilebar">
+        {% if user.is_authenticated %}
+            <div class="fw-semibold mb-3">
+                👋 Hello, {{ user.username }} <br>
+                <small class="text-muted">({{ user.userprofile.role|title }})</small>
+            </div>
+            <a href="{% url 'profile_view' %}" class="btn btn-outline-dark w-100 mb-2">Profile</a>
+            <a href="{% url 'logoutuser' %}" class="btn btn-outline-danger w-100">Logout</a>
+        {% else %}
+            <a href="{% url 'loginuser' %}" class="btn btn-primary w-100">Login</a>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const profilebar = document.getElementById('profilebar');
+            sidebar.classList.toggle('show');
+            profilebar.classList.remove('show');
+        }
+
+        function toggleProfile() {
+            const profilebar = document.getElementById('profilebar');
+            const sidebar = document.getElementById('sidebar');
+            profilebar.classList.toggle('show');
+            sidebar.classList.remove('show');
+        }
+
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const profilebar = document.getElementById('profilebar');
+            const togglebtn = document.getElementById('togglebtn');
+
+            if (!sidebar.contains(event.target) && !togglebtn.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+            if (!profilebar.contains(event.target) && !event.target.closest('.bi-person-circle')) {
+                profilebar.classList.remove('show');
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            document.getElementById('sidebar').classList.remove('show');
+            document.getElementById('profilebar').classList.remove('show');
+        });
+    </script>
+    {% block content %}
+    <!-- Page-specific content -->
+    {% endblock %}
+
+

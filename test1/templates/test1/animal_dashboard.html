@@ -1,0 +1,76 @@
+{% extends "test1/base.html" %}
+{% block title %}Veterinary Dashboard{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold text-success mb-4">🐄 Veterinary Officer Dashboard
+
+  <!-- Quick Actions -->
+  <div class="d-flex justify-content-end mb-4">
+    <a href="{% url 'add_animal_report' %}" class="btn btn-outline-success rounded-pill me-2">
+      🐄 Add Animal Report
+    </a>
+    <a href="{% url 'my_animal_reports' %}" class="btn btn-success rounded-pill">
+      📋 My Reports
+    </a>
+  </div>
+</h2>
+  <div class="row g-4">
+    <div class="col-md-3">
+      <div class="card border-0 shadow-lg text-center p-4 rounded-4 bg-success-subtle">
+        <h4 class="fw-bold">Total Animal Cases</h4>
+        <h2 class="text-success fw-bold">{{ total_cases }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-lg text-center p-4 rounded-4 bg-danger-subtle">
+        <h4 class="fw-bold">Total Deaths</h4>
+        <h2 class="text-danger fw-bold">{{ total_deaths }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-lg text-center p-4 rounded-4 bg-primary-subtle">
+        <h4 class="fw-bold">Reports Added</h4>
+        <h2 class="text-primary fw-bold">{{ reports_added }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-lg text-center p-4 rounded-4 bg-warning-subtle">
+        <h4 class="fw-bold">Districts Covered</h4>
+        <h2 class="text-warning fw-bold">{{ districts_covered }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-5">
+
+  <h4 class="fw-bold text-secondary mb-3">📍 Latest Animal Disease Reports</h4>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle shadow-sm rounded-4 overflow-hidden">
+      <thead class="table-success">
+        <tr>
+          <th>Disease</th>
+          <th>District</th>
+          <th>Date</th>
+          <th>Cases</th>
+          <th>Deaths</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for report in animal_reports %}
+        <tr>
+          <td>{{ report.disease.name }}</td>
+          <td>{{ report.district.name }}</td>
+          <td>{{ report.date_reported }}</td>
+          <td>{{ report.number_of_cases }}</td>
+          <td>{{ report.deaths }}</td>
+          <td>{{ report.source }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted">No animal reports available yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "test1/base.html" %}
+{% block title %}Environment Overview{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold text-success mb-4">🌍 Environment Overview</h2>
+
+  <div class="table-responsive shadow rounded-4 overflow-hidden">
+    <table class="table table-hover align-middle">
+      <thead class="table-success">
+        <tr>
+          <th>District</th>
+          <th>State</th>
+          <th>Air Quality Index</th>
+          <th>Water Quality</th>
+          <th>Noise Level</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in overview %}
+        <tr>
+          <td>{{ data.district }}</td>
+          <td>{{ data.state }}</td>
+          <td>{{ data.aqi }}</td>
+          <td>{{ data.water_quality }}</td>
+          <td>{{ data.noise_level }}</td>
+          <td>
+            {% if data.status == "High" %}
+              <span class="badge bg-danger rounded-pill">High</span>
+            {% elif data.status == "Moderate" %}
+              <span class="badge bg-warning text-dark rounded-pill">Moderate</span>
+            {% else %}
+              <span class="badge bg-success rounded-pill">Low</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

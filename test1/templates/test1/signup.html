@@ -1,0 +1,44 @@
+{% extends 'test1/base.html' %}
+{% block title %}Sign Up | Health Mate{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center mt-2" >
+  <div class="card shadow p-4" style="max-width: 450px; width: 100%;">
+    <h3 class="text-center mb-3">Create Account</h3>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <input type="text" name="username" class="form-control" placeholder="Username" required>
+      </div>
+      <div class="mb-3">
+        <input type="email" name="email" class="form-control" placeholder="Email" required>
+      </div>
+      <div class="mb-3">
+        <input type="password" name="password1" class="form-control" placeholder="Password" required>
+      </div>
+      <div class="mb-3">
+        <input type="password" name="password2" class="form-control" placeholder="Confirm Password" required>
+      </div>
+      <div class="mb-3">
+        <select name="role" class="form-select" required>
+          <option value="">Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="health_worker">Health Worker</option>
+          <option value="veterinary_officer">Veterinary Officer</option>
+          <option value="environment_officer">Environment Officer</option>
+        </select>
+      </div>
+      <button class="btn btn-success w-100" type="submit">Register</button>
+    </form>
+
+    <p class="text-center mt-3">
+      Already have an account? <a href="{% url 'loginuser' %}">Login</a>
+    </p>
+  </div>
+</div>
+
+{% endblock %}

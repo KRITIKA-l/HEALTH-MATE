@@ -1,0 +1,115 @@
+{% extends "test1/base.html" %}
+
+{% block title %}District Overview{% endblock %}
+{% block header %}District Analysis{% endblock %}
+
+{% block content %}
+<div class="container-fluid bg-white rounded-4 shadow-sm p-4">
+  <h3 class="mb-4 fw-semibold text-primary">District Overview</h3>
+
+  <!-- Summary Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card text-center border-0 shadow-sm p-3 summary-card">
+        <h6 class="text-muted mb-1">Total Districts</h6>
+        <h3 class="fw-bold text-primary">{{ total_districts }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center border-0 shadow-sm p-3 summary-card">
+        <h6 class="text-muted mb-1">Total Reports</h6>
+        <h3 class="fw-bold text-success">{{ total_reports }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center border-0 shadow-sm p-3 summary-card">
+        <h6 class="text-muted mb-1">Most Affected District</h6>
+        <h3 class="fw-bold text-danger">{{ most_affected_district }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unique Visualization -->
+  <div class="bg-light p-3 rounded-3 mb-4 shadow-sm">
+    <h5 class="fw-semibold text-secondary mb-3"><i class="bi bi-activity"></i> Health Load Indicator</h5>
+    <div class="progress" style="height: 25px;">
+      {% if total_reports < 50 %}
+        <div class="progress-bar bg-success" style="width: 30%;">Stable</div>
+      {% elif total_reports < 150 %}
+        <div class="progress-bar bg-warning" style="width: 60%;">Moderate</div>
+      {% else %}
+        <div class="progress-bar bg-danger" style="width: 90%;">Critical</div>
+      {% endif %}
+    </div>
+    <small class="text-muted">Indicator based on total active disease reports across districts.</small>
+  </div>
+
+  <!-- Leaderboard -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3 fw-semibold text-dark"><i class="bi bi-trophy text-warning"></i> Top 3 Districts (by Reports)</h5>
+      <ol class="list-group list-group-numbered">
+        {% for d in districts|dictsortreversed:"report_count"|slice:":3" %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">{{ d.name }}</span>
+            <span class="badge bg-primary rounded-pill">{{ d.report_count }} reports</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No district data available.</li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+
+  <!-- District Data Table -->
+  <div class="table-responsive mt-4">
+    <table class="table table-striped table-hover align-middle border">
+      <thead class="table-light">
+        <tr>
+          <th>District</th>
+          <th>State</th>
+          <th>Population</th>
+          <th>Reports</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in districts %}
+        <tr>
+          <td class="fw-semibold">{{ d.name }}</td>
+          <td>{{ d.state }}</td>
+          <td>{{ d.population|default:"-" }}</td>
+          <td>{{ d.report_count }}</td>
+          <td>
+            {% if d.report_count > 10 %}
+              <span class="badge bg-danger">High</span>
+            {% elif d.report_count > 3 %}
+              <span class="badge bg-warning text-dark">Medium</span>
+            {% else %}
+              <span class="badge bg-success">Low</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+.summary-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 1rem;
+}
+.summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+}
+.progress-bar {
+  transition: width 1.2s ease;
+}
+</style>
+{% endblock %}

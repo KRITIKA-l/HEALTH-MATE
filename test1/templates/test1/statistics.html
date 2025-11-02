@@ -1,0 +1,154 @@
+{% extends "test1/base.html" %}
+{% block title %}Public Health Statistics{% endblock %}
+{% block header %}Statistics{% endblock %}
+
+{% block content %}
+<div class="container bg-white rounded-4 shadow-sm p-4">
+
+  <!-- Header -->
+  <div class="text-center mb-4">
+    <h2 class="fw-bold text-success mb-1">
+      <i class="bi bi-bar-chart-line me-2"></i> Public Health Statistics
+    </h2>
+    <p class="text-muted">Live overview of integrated human, animal, and environmental health reports.</p>
+  </div>
+
+  <!-- Top Stat Counters -->
+  <div class="row g-3 text-center mb-4">
+    <div class="col-md-4">
+      <div class="stat-card bg-light border-0 shadow-sm p-3 rounded-4">
+        <i class="bi bi-person-heart text-primary fs-2"></i>
+        <h6 class="mt-2 text-muted">Human Cases</h6>
+        <h3 class="fw-bold text-primary counter" data-count="{{ total_human_cases|default:0 }}">0</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card bg-light border-0 shadow-sm p-3 rounded-4">
+        <i class="bi bi-bug text-success fs-2"></i>
+        <h6 class="mt-2 text-muted">Animal Cases</h6>
+        <h3 class="fw-bold text-success counter" data-count="{{ total_animal_cases|default:0 }}">0</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card bg-light border-0 shadow-sm p-3 rounded-4">
+        <i class="bi bi-tree text-warning fs-2"></i>
+        <h6 class="mt-2 text-muted">Environmental Alerts</h6>
+        <h3 class="fw-bold text-warning counter" data-count="{{ total_environmental_cases|default:0 }}">0</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Distribution -->
+  <div class="mt-4">
+    <h5 class="fw-semibold mb-3 text-secondary"><i class="bi bi-pie-chart"></i> Category Distribution</h5>
+
+    <div class="mb-3">
+      <div class="d-flex justify-content-between">
+        <span>Human</span><span class="fw-bold">{{ human_percent|default:"0" }}%</span>
+      </div>
+      <div class="progress" style="height: 14px;">
+        <div class="progress-bar bg-primary" role="progressbar" data-pct="{{ human_percent|default:"0" }}"></div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <div class="d-flex justify-content-between">
+        <span>Animal</span><span class="fw-bold">{{ animal_percent|default:"0" }}%</span>
+      </div>
+      <div class="progress" style="height: 14px;">
+        <div class="progress-bar bg-success" role="progressbar" data-pct="{{ animal_percent|default:"0" }}"></div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <div class="d-flex justify-content-between">
+        <span>Environmental</span><span class="fw-bold">{{ environmental_percent|default:"0" }}%</span>
+      </div>
+      <div class="progress" style="height: 14px;">
+        <div class="progress-bar bg-warning" role="progressbar" data-pct="{{ environmental_percent|default:"0" }}"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="alert alert-info border-0 shadow-sm rounded-3 mt-4 text-center">
+    <i class="bi bi-lightbulb me-2"></i>
+    <strong>Insight:</strong>
+    {% if total_cases %}
+      <span class="fw-bold text-success">{{ top_category }}</span> sector currently reports the highest cases 
+      ({{ top_percent }}% of total).
+    {% else %}
+      No reports yet. Data will appear once reports are added.
+    {% endif %}
+  </div>
+
+  <!-- District & Disease Insights -->
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="p-3 rounded-3 bg-light shadow-sm">
+        <h6 class="fw-bold text-secondary"><i class="bi bi-geo-alt text-danger"></i> Top Districts</h6>
+        <ul class="list-group list-group-flush small">
+          {% for d in top_districts %}
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ forloop.counter }}. {{ d.district__name }}</span>
+            <span class="fw-bold">{{ d.total_cases }}</span>
+          </li>
+          {% empty %}
+          <li class="list-group-item text-muted text-center">No district data available</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="p-3 rounded-3 bg-light shadow-sm">
+        <h6 class="fw-bold text-secondary"><i class="bi bi-virus text-danger"></i> Top Diseases</h6>
+        <ul class="list-group list-group-flush small">
+          {% for d in top_diseases %}
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ forloop.counter }}. {{ d.disease__name }}</span>
+            <span class="fw-bold">{{ d.total_cases }}</span>
+          </li>
+          {% empty %}
+          <li class="list-group-item text-muted text-center">No disease data available</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Styles -->
+<style>
+.stat-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.stat-card:hover { transform: translateY(-6px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.alert-info { background-color: #e9f6ff; color: #065a5a; }
+.progress { background-color: #f1f3f5; border-radius: 8px; }
+.progress-bar { transition: width 1s ease; }
+</style>
+
+<!-- JS -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Progress animation
+  document.querySelectorAll('.progress-bar').forEach(bar => {
+    const pct = parseFloat(bar.getAttribute('data-pct') || "0");
+    bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
+  });
+
+  // Counter animation
+  document.querySelectorAll('.counter').forEach(counter => {
+    const target = +counter.getAttribute('data-count');
+    const duration = 1000;
+    const step = Math.ceil(target / (duration / 30));
+    let count = 0;
+    const interval = setInterval(() => {
+      count += step;
+      if (count >= target) { count = target; clearInterval(interval); }
+      counter.textContent = count;
+    }, 30);
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "test1/base.html" %}
+{% block title %}District Data{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h2 class="fw-bold text-success">
+      🗺️ District-Level Animal Data
+    </h2>
+    <span class="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-2 shadow-sm">
+      {{ districts|length }} District{{ districts|length|pluralize }}
+    </span>
+  </div>
+
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-success text-center">
+          <tr>
+            <th>🏢 District</th>
+            <th>🌍 State</th>
+            <th>👥 Population</th>
+            <th>🐄 Total Animal Cases</th>
+            <th>☠️ Total Deaths</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for district in districts %}
+          <tr class="text-center">
+            <td class="fw-semibold text-success">{{ district.name }}</td>
+            <td>{{ district.state }}</td>
+            <td>{{ district.population|default:"N/A" }}</td>
+            <td class="fw-semibold text-warning">{{ district.total_cases }}</td>
+            <td class="fw-semibold text-danger">{{ district.total_deaths }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              <i class="bi bi-exclamation-circle"></i> No district data available.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <style>
+    table.table-hover tbody tr:hover {
+      background-color: #f6fff6 !important;
+      transform: scale(1.01);
+      transition: all 0.2s ease;
+    }
+  </style>
+</div>
+{% endblock %}

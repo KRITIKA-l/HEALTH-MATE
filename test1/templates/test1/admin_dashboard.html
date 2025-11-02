@@ -1,0 +1,255 @@
+{% extends 'test1/base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<style>
+  /* ===== Dashboard Styling ===== */
+  body {
+    background-color: #f8f9fa;
+  }
+
+  .dashboard-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .dashboard-header h2 {
+    font-weight: 700;
+    color: #0d6efd;
+  }
+
+  .dashboard-header p {
+    color: #6c757d;
+    font-size: 0.95rem;
+  }
+
+  /* ===== Summary Cards ===== */
+  .dashboard-card {
+    border: none;
+    border-radius: 14px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    background: white;
+    padding: 2rem 1rem;
+  }
+
+  .dashboard-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .dashboard-card i {
+    font-size: 2.8rem;
+    display: block;
+    margin-bottom: 0.8rem;
+  }
+
+  .dashboard-card h5 {
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .dashboard-card p {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 0;
+  }
+
+  /* ===== Section Cards ===== */
+  .card-section {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .card-section .card-header {
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+  }
+
+  .card-section .card-body {
+    padding: 1.5rem 2rem;
+  }
+
+  .btn-custom {
+    border-radius: 8px;
+    transition: 0.2s;
+  }
+
+  .btn-custom:hover {
+    transform: translateY(-2px);
+  }
+
+  /* ===== Charts ===== */
+  .chart-container {
+    padding: 2rem;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+  }
+
+  #charts-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: space-between;
+  }
+
+  .chart-box {
+    flex: 1;
+    min-width: 320px;
+  }
+
+  /* Keep sidebar/navbar above all */
+  .sidebar, .profilebar { z-index: 1200 !important; }
+  .navbar { z-index: 1300 !important; }
+  main, .container-fluid { position: relative; z-index: 1; }
+</style>
+
+<div class="container-fluid py-5 px-4">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <h2><i class="bi bi-speedometer2 me-2"></i>Admin Dashboard</h2>
+    <p>Monitor users, reports, and real-time health analytics across districts.</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-3 col-sm-6">
+      <div class="dashboard-card text-center">
+        <i class="bi bi-people text-primary"></i>
+        <h5>Total Users</h5>
+        <p>{{ total_users }}</p>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="dashboard-card text-center">
+        <i class="bi bi-clipboard-data text-success"></i>
+        <h5>Total Reports</h5>
+        <p>{{ total_reports }}</p>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="dashboard-card text-center">
+        <i class="bi bi-geo-alt text-danger"></i>
+        <h5>Districts</h5>
+        <p>{{ total_districts }}</p>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="dashboard-card text-center">
+        <i class="bi bi-virus text-warning"></i>
+        <h5>Active Diseases</h5>
+        <p>{{ total_diseases }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Management Panels -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-6">
+      <div class="card-section h-100">
+        <div class="card-header bg-primary text-white py-3 px-4">
+          <i class="bi bi-person-gear me-2"></i> Manage Users
+        </div>
+        <div class="card-body">
+          <p class="text-muted">View, modify, and manage all registered user accounts and roles.</p>
+          <a href="{% url 'manage_users' %}" class="btn btn-outline-primary btn-custom">
+            <i class="bi bi-eye me-1"></i> View Users
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card-section h-100">
+        <div class="card-header bg-success text-white py-3 px-4">
+          <i class="bi bi-clipboard-data me-2"></i> Reports Overview
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Track and analyze reports submitted from various districts and sources.</p>
+
+          <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'manage_reports' %}" class="btn btn-outline-success btn-custom">
+              <i class="bi bi-graph-up me-1"></i> View Reports
+            </a>
+
+            <a href="{% url 'download_all_reports' %}" class="btn btn-success btn-custom">
+              <i class="bi bi-download me-1"></i> Download CSV
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- Analytics Section -->
+  <div class="chart-container mb-5">
+    <div class="card-header bg-secondary text-white rounded-top py-3 px-4 mb-4">
+      <i class="bi bi-bar-chart-line me-2"></i><strong>Analytics Summary</strong>
+    </div>
+    <div id="charts-row">
+      <div class="chart-box">
+        <h6 class="text-center mb-2 text-muted">Reports by District</h6>
+        <div id="districtChart" style="height:300px;"></div>
+      </div>
+      <div class="chart-box">
+        <h6 class="text-center mb-2 text-muted">Disease Distribution</h6>
+        <div id="diseaseChart" style="height:300px;"></div>
+      </div>
+    </div>
+    <div class="chart-box mt-4">
+      <h6 class="text-center mb-2 text-muted">Reports by User</h6>
+      <div id="userChart" style="height:350px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Google Charts CDN -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawCharts);
+
+  function drawCharts() {
+    // ===== District Reports Chart =====
+    var districtData = google.visualization.arrayToDataTable({{ district_data_json|safe }});
+    var districtOptions = {
+      title: '',
+      colors: ['#0d6efd'],
+      legend: { position: 'none' },
+      backgroundColor: 'transparent'
+    };
+    var districtChart = new google.visualization.ColumnChart(document.getElementById('districtChart'));
+    districtChart.draw(districtData, districtOptions);
+
+    // ===== Disease Distribution Chart =====
+    var diseaseData = google.visualization.arrayToDataTable({{ disease_data_json|safe }});
+    var diseaseOptions = {
+      title: '',
+      pieHole: 0.3,
+      colors: ['#0d6efd','#198754','#ffc107','#dc3545','#6610f2'],
+      backgroundColor: 'transparent'
+    };
+    var diseaseChart = new google.visualization.PieChart(document.getElementById('diseaseChart'));
+    diseaseChart.draw(diseaseData, diseaseOptions);
+
+    // ===== User Activity Chart =====
+    var userData = google.visualization.arrayToDataTable({{ user_data_json|safe }});
+    var userOptions = {
+      title: '',
+      curveType: 'function',
+      legend: { position: 'bottom' },
+      colors: ['#20c997'],
+      backgroundColor: 'transparent'
+    };
+    var userChart = new google.visualization.LineChart(document.getElementById('userChart'));
+    userChart.draw(userData, userOptions);
+  }
+
+  window.addEventListener('resize', drawCharts);
+</script>
+
+{% endblock %}

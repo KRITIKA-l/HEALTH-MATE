@@ -1,0 +1,48 @@
+{% extends "test1/base.html" %}
+{% block title %}Environment Dashboard{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold text-success mb-4">🌿 Environment Officer Dashboard</h2>
+
+  <div class="row g-4">
+    <div class="col-md-3">
+      <div class="card border-0 shadow-lg text-center p-4 rounded-4 bg-success-subtle">
+        <h4 class="fw-bold">Total Reports</h4>
+        <h2 class="text-success fw-bold">{{ total_reports }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-lg text-center p-4 rounded-4 bg-warning-subtle">
+        <h4 class="fw-bold">Active Districts</h4>
+        <h2 class="text-warning fw-bold">{{ active_districts }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-lg text-center p-4 rounded-4 bg-primary-subtle">
+        <h4 class="fw-bold">Total Cases</h4>
+        <h2 class="text-primary fw-bold">{{ pollution_cases }}</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-lg text-center p-4 rounded-4 bg-danger-subtle">
+        <h4 class="fw-bold">Critical Alerts</h4>
+        <h2 class="text-danger fw-bold">{{ critical_alerts }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-5">
+
+  <div class="text-center">
+    <a href="{% url 'add_environment_report' %}" class="btn btn-success rounded-pill px-4 me-3">
+      ➕ Add Report
+    </a>
+    <a href="{% url 'environment_reports' %}" class="btn btn-outline-success rounded-pill px-4 me-3">
+      📋 My Reports
+    </a>
+    <a href="{% url 'environment_overview' %}" class="btn btn-outline-dark rounded-pill px-4">
+      🌎 Overview
+    </a>
+  </div>
+</div>
+{% endblock %}

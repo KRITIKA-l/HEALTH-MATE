@@ -1,0 +1,137 @@
+{% extends "test1/base.html" %}
+
+{% block title %}Disease Overview{% endblock %}
+{% block header %}Disease Analysis{% endblock %}
+
+{% block content %}
+<div class="container-fluid bg-white rounded-4 shadow-sm p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-semibold text-primary">Disease Overview</h3>
+
+    <!-- 🔍 Search Bar -->
+    <form method="get" class="d-flex" role="search">
+      <input type="text" name="q" value="{{ request.GET.q }}" class="form-control me-2" placeholder="Search disease...">
+      <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card text-center border-0 shadow-sm p-3 summary-card">
+        <h6 class="text-muted mb-1">Total Diseases</h6>
+        <h3 class="fw-bold text-primary">{{ total_diseases }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center border-0 shadow-sm p-3 summary-card">
+        <h6 class="text-muted mb-1">Total Cases</h6>
+        <h3 class="fw-bold text-success">{{ total_cases }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center border-0 shadow-sm p-3 summary-card">
+        <h6 class="text-muted mb-1">Critical Diseases</h6>
+        <h3 class="fw-bold text-danger">{{ critical_diseases }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center border-0 shadow-sm p-3 summary-card">
+        <h6 class="text-muted mb-1">Recent Reports (2025)</h6>
+        <h3 class="fw-bold text-warning">{{ recent_reports }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Highlight Section -->
+  <div class="alert alert-info border-0 shadow-sm rounded-3">
+    <i class="bi bi-activity"></i>
+    <strong>Did you know?</strong> {{ diseases|length }} diseases are being tracked in real-time. 
+    {% if critical_diseases > 0 %}
+      <span class="badge bg-danger ms-2">{{ critical_diseases }} critical</span>
+    {% endif %}
+  </div>
+
+  <!-- Disease Table -->
+  <div class="table-responsive mt-4">
+    <table class="table align-middle table-hover border">
+      <thead class="table-light">
+        <tr>
+          <th>Disease</th>
+          <th>Category</th>
+          <th>Severity</th>
+          <th class="text-center">Reports</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in diseases %}
+        <tr>
+          <td class="fw-semibold">{{ d.name }}</td>
+          <td><span class="badge bg-secondary">{{ d.category|title }}</span></td>
+
+          <!-- Severity Column -->
+          <td>
+            {% if d.severity %}
+              {% if d.severity|lower == "high" %}
+                <span class="badge bg-danger">High</span>
+              {% elif d.severity|lower == "moderate" %}
+                <span class="badge bg-warning text-dark">Moderate</span>
+              {% elif d.severity|lower == "low" %}
+                <span class="badge bg-success">Low</span>
+              {% else %}
+                <span class="badge bg-light text-muted">{{ d.severity|title }}</span>
+              {% endif %}
+            {% else %}
+              <span class="badge bg-light text-muted">Unknown</span>
+            {% endif %}
+          </td>
+
+          <!-- Reports -->
+          <td class="text-center">{{ d.report_count|default:0 }}</td>
+
+          <!-- Status -->
+          <td>
+            {% if d.report_count > 10 %}
+              <span class="text-danger fw-semibold"><i class="bi bi-arrow-up-circle"></i> Rising</span>
+            {% elif d.report_count > 0 %}
+              <span class="text-warning fw-semibold"><i class="bi bi-arrow-right-circle"></i> Stable</span>
+            {% else %}
+              <span class="text-success fw-semibold"><i class="bi bi-check-circle"></i> Controlled</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">
+            <i class="bi bi-exclamation-circle"></i> No diseases found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+.summary-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 1rem;
+}
+.summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+}
+.alert-info {
+  background-color: #e7f3ff;
+  color: #084298;
+}
+input.form-control {
+  border-radius: 0.75rem;
+  box-shadow: none !important;
+}
+</style>
+{% endblock %}

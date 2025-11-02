@@ -1,0 +1,116 @@
+{% extends "test1/base.html" %}
+{% block title %}Add Report{% endblock %}
+{% block content %}
+
+<div class="container py-5">
+  <h2 class="fw-bold text-primary mb-4">➕ Add New Disease Report</h2>
+
+  <form method="POST" class="card shadow-lg p-4 rounded-4 bg-light border-0">
+    {% csrf_token %}
+    <div class="row g-4">
+      <!-- District -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">District</label>
+        <select name="district" class="form-select rounded-pill" required>
+          <option value="">Select District</option>
+          {% for district in districts %}
+            <option value="{{ district.id }}">{{ district.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Disease -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Disease</label>
+        <select name="disease" class="form-select rounded-pill" required>
+          <option value="">Select Disease</option>
+          {% for disease in diseases %}
+            <option value="{{ disease.id }}">{{ disease.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Cases -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Number of Cases</label>
+        <input type="number" name="number_of_cases" class="form-control rounded-pill" required>
+      </div>
+
+      <!-- Deaths -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Number of Deaths</label>
+        <input type="number" name="deaths" class="form-control rounded-pill">
+      </div>
+
+      <!-- Source with voice input -->
+      <div class="col-12">
+        <label class="form-label fw-semibold">Source</label>
+        <div class="input-group">
+          <input 
+            type="text" 
+            id="sourceInput" 
+            name="source" 
+            placeholder="Source or reporter name" 
+            class="form-control rounded-start-pill" 
+          >
+          <button 
+            type="button" 
+            id="micButton" 
+            class="btn btn-outline-primary rounded-end-pill px-4" 
+            title="Click to record using mic">
+            🎙️
+          </button>
+        </div>
+        <small id="micStatus" class="text-muted ms-2"></small>
+      </div>
+    </div>
+
+    <div class="text-end mt-4">
+      <button type="submit" class="btn btn-primary px-5 rounded-pill">Submit Report</button>
+    </div>
+  </form>
+</div>
+
+<!-- ✅ Voice Recognition Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const micButton = document.getElementById("micButton");
+  const sourceInput = document.getElementById("sourceInput");
+  const micStatus = document.getElementById("micStatus");
+
+  if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
+    micButton.disabled = true;
+    micStatus.textContent = "❌ Voice input not supported on this browser.";
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-IN";
+  recognition.interimResults = false;
+
+  micButton.addEventListener("click", function() {
+    recognition.start();
+    micStatus.textContent = "🎤 Listening...";
+    micButton.classList.add("btn-danger");
+  });
+
+  recognition.onresult = function(event) {
+    const transcript = event.results[0][0].transcript;
+    sourceInput.value = transcript;
+    micStatus.textContent = "✅ Voice captured successfully.";
+    micButton.classList.remove("btn-danger");
+  };
+
+  recognition.onerror = function() {
+    micStatus.textContent = "⚠️ Could not capture voice. Try again.";
+    micButton.classList.remove("btn-danger");
+  };
+
+  recognition.onend = function() {
+    micButton.classList.remove("btn-danger");
+  };
+});
+</script>
+
+{% endblock %}

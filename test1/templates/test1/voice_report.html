@@ -1,0 +1,50 @@
+{% extends "test1/base.html" %}
+{% block title %}Voice Report{% endblock %}
+{% block content %}
+
+<div class="container py-5">
+  <h2 class="fw-bold text-success mb-4">🎤 Submit Voice Report</h2>
+
+  <form method="POST" enctype="multipart/form-data" class="card shadow p-4 bg-light border-0 rounded-4 mb-5">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Upload Audio File</label>
+      <input type="file" name="audio_file" accept="audio/*" class="form-control rounded-pill" required>
+    </div>
+    <button type="submit" class="btn btn-success px-5 rounded-pill">Upload</button>
+  </form>
+
+  <h4 class="fw-bold text-dark mb-3">📜 Previous Voice Reports</h4>
+
+  <table class="table table-hover shadow-sm rounded-4 bg-white">
+    <thead class="table-success">
+      <tr>
+        <th>#</th>
+        <th>Timestamp</th>
+        <th>Status</th>
+        <th>Audio</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in voice_reports %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ report.timestamp|date:"d M Y, H:i" }}</td>
+        <td>
+          <span class="badge 
+            {% if report.status == 'pending' %}bg-warning
+            {% elif report.status == 'verified' %}bg-info
+            {% else %}bg-success{% endif %}">
+            {{ report.status }}
+          </span>
+        </td>
+        <td><audio controls src="{{ report.audio_file.url }}" class="w-75"></audio></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center text-muted">No voice reports yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

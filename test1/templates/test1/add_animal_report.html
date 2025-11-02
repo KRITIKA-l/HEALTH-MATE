@@ -1,0 +1,90 @@
+{% extends "test1/base.html" %}
+{% block title %}Add Animal Report{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold text-success mb-4">🐄 Add Animal Disease Report</h2>
+
+  <form method="POST" class="card shadow-lg p-4 rounded-4 bg-light border-0">
+    {% csrf_token %}
+    <div class="row g-4">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">District</label>
+        <select name="district" class="form-select rounded-pill" required>
+          {% for district in districts %}
+            <option value="{{ district.id }}">{{ district.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Animal Disease</label>
+        <select name="disease" class="form-select rounded-pill" required>
+          {% for disease in diseases %}
+            {% if disease.category == 'animal' %}
+              <option value="{{ disease.id }}">{{ disease.name }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Cases</label>
+        <input type="number" name="number_of_cases" class="form-control rounded-pill" required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Deaths</label>
+        <input type="number" name="deaths" class="form-control rounded-pill">
+      </div>
+
+      <!-- Source with mic icon -->
+      <div class="col-12 position-relative">
+        <label class="form-label fw-semibold">Source</label>
+        <div class="input-group">
+          <input type="text" id="sourceInput" name="source" class="form-control rounded-pill" placeholder="Enter or speak source...">
+          <button type="button" id="micButton" class="btn btn-outline-success rounded-circle ms-2" title="Speak Now">
+            🎤
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-end mt-4">
+      <button type="submit" class="btn btn-success px-5 rounded-pill">Submit</button>
+    </div>
+  </form>
+</div>
+
+<!-- Voice recognition script -->
+<script>
+  const micButton = document.getElementById("micButton");
+  const sourceInput = document.getElementById("sourceInput");
+
+  if ('webkitSpeechRecognition' in window) {
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'en-IN';
+    recognition.interimResults = false;
+
+    micButton.addEventListener("click", () => {
+      recognition.start();
+      micButton.innerHTML = "🎙️";
+      micButton.classList.add("active");
+    });
+
+    recognition.onresult = (event) => {
+      sourceInput.value = event.results[0][0].transcript;
+      micButton.innerHTML = "🎤";
+      micButton.classList.remove("active");
+    };
+
+    recognition.onerror = () => {
+      micButton.innerHTML = "🎤";
+      micButton.classList.remove("active");
+    };
+  } else {
+    micButton.disabled = true;
+    micButton.title = "Voice input not supported in this browser";
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "test1/base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="card shadow-lg rounded-4 p-4 mx-auto" style="max-width: 700px;">
+    <h2 class="fw-bold text-center text-success mb-4">👤 My Profile</h2>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Username</label>
+        <input type="text" class="form-control" value="{{ user.username }}" readonly>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Email</label>
+        <input type="email" class="form-control" value="{{ user.email }}" readonly>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Role</label>
+        <input type="text" class="form-control" value="{{ user_profile.get_role_display }}" readonly>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Date Joined</label>
+        <input type="text" class="form-control" value="{{ user.date_joined|date:'d M Y' }}" readonly>
+      </div>
+    </div>
+
+    <form method="POST" class="mt-4">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Phone Number</label>
+          <input type="text" name="phone" class="form-control" value="{{ user_profile.phone|default_if_none:'' }}" placeholder="Enter your phone number">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">District</label>
+          <input type="text" name="district" class="form-control" value="{{ user_profile.district|default_if_none:'' }}" placeholder="Enter your district">
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-5 py-2 rounded-4 shadow-sm">💾 Save Changes</button>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary px-4 py-2 rounded-4 shadow-sm ms-2">🏠 Back to Home</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
