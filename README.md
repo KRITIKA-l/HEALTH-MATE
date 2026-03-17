@@ -3,7 +3,7 @@
 A unified, Django-powered surveillance platform that connects **human**, **animal**, and **environmental** health data into one intelligent ecosystem.  
 Designed for rapid reporting, early outbreak detection, and smooth communication across departments.
 
----
+--- 
 
 ## ✨ What This System Delivers
 
